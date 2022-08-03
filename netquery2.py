@@ -1,9 +1,13 @@
 import datetime
 import os
 import netmiko
+import paramiko
 
 from netmiko import ConnectHandler
-from netmiko.ssh_exception import NetMikoTimeoutException
+from netmiko import NetMikoTimeoutException
+from netmiko import NetMikoAuthenticationException
+from netmiko import NetmikoTimeoutException
+from paramiko.ssh_exception import SSHException
 from getpass import getpass
 from pathlib import Path
 
@@ -30,10 +34,12 @@ try:
     connection = ConnectHandler(**dict)
 except (NetMikoTimeoutException):
     print('The following device timed out: ' + dict['ip'])
+except (NetMikoAuthenticationException):
+    print('Encountered Authentication Error')
+except (SSHException):
+    print('SSH Error Encountered')
 
 output = connection.send_command('show run')
-
-date = datetime.datetime.now()
 
 openFile.write(output)
 
